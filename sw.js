@@ -1,5 +1,5 @@
 /* DeepSeek 助手 PWA service worker：静态资源缓存优先，API 请求直接放行。 */
-const CACHE = 'ds-chat-v2';
+const CACHE = 'ds-chat-v3';
 const SHELL = [
   './',
   'index.html',
@@ -42,6 +42,25 @@ self.addEventListener('fetch', (event) => {
   // 只接管本站资源；API 与第三方一律走网络，不做缓存也不改写
   if (url.origin !== self.location.origin) return;
   if (request.method !== 'GET') return;
+
+  // 导航请求走网络优先：更新能立刻生效，断网才回落缓存
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(CACHE);
+        try {
+          const response = await fetch(request);
+          if (response.ok) cache.put('index.html', response.clone());
+          return response;
+        } catch (error) {
+          const shell = await cache.match('index.html', { ignoreSearch: true });
+          if (shell) return shell;
+          throw error;
+        }
+      })()
+    );
+    return;
+  }
 
   event.respondWith(
     (async () => {

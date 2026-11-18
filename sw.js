@@ -1,8 +1,9 @@
 /* DeepSeek 助手 PWA service worker：静态资源缓存优先，API 请求直接放行。 */
-const CACHE = 'ds-chat-v1';
+const CACHE = 'ds-chat-v2';
 const SHELL = [
   './',
   'index.html',
+  'compact.js',
   'manifest.json',
   'icon-192.png',
   'icon-512.png'

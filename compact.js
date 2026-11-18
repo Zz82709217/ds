@@ -251,4 +251,26 @@
       return origFetch(input, init);
     }
   };
+
+  // 版本标记：确认压缩脚本已加载
+  function showBadge() {
+    try {
+      var badge = document.createElement('div');
+      badge.textContent = 'v2 · 压缩已启用';
+      badge.style.cssText =
+        'position:fixed;left:8px;bottom:4px;z-index:2147483647;' +
+        'font-size:10px;line-height:1;padding:3px 6px;border-radius:6px;' +
+        'background:rgba(77,107,254,.12);color:#4d6bfe;pointer-events:none;' +
+        'font-family:system-ui,sans-serif;opacity:.75;';
+      document.body.appendChild(badge);
+    } catch (error) {
+      /* 标记失败不影响压缩 */
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showBadge);
+  } else {
+    showBadge();
+  }
 })();
